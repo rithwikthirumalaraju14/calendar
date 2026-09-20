@@ -49,7 +49,7 @@ is completely closed.
 Consequently, the current PWA can notify on the correct day when it is opened or
 resumed, but it cannot guarantee an alert while fully closed and offline.
 
-## Vercel deployment and app updates
+## Vercel deployment and app updates...
 
 Vercel deploys deyam as an installable PWA, not as an APK. When the Vercel project
 is connected to a Git repository, pushing to its configured production branch
