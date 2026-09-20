@@ -96,7 +96,7 @@ function showPage() {
   else if (failedDrafts.has(selectedKey)) setStatus('Draft not stored. Save or download a backup.', 'error');
   else if (drafts.has(selectedKey)) setStatus('Your unfinished draft is here');
   else if (notes.has(selectedKey)) setStatus('Saved on this device', 'saved');
-  else setStatus('A fresh page, just for you');
+  else setStatus('Just to be not forgotten. can u pls think about me ......?');
   updateEditorState();
 }
 
@@ -109,7 +109,7 @@ function renderCalendar() {
   elements.month.append(year);
   const prefix = dateKey(visibleMonth).slice(0, 7);
   const count = [...notes.keys()].filter((key) => key.startsWith(prefix)).length;
-  elements.count.textContent = count ? `${count} ${count === 1 ? 'day' : 'days'} held here` : 'A fresh page awaits';
+  elements.count.textContent = count ? `${count} ${count === 1 ? 'day' : 'days'} held here` : 'I like u so much raaa.....';
   const today = dateKey(new Date());
   const estimate = cycleEstimate(cycle?.startDate);
   const carefulDays = new Set(estimate?.carefulDays ?? []);

@@ -49,6 +49,54 @@ is completely closed.
 Consequently, the current PWA can notify on the correct day when it is opened or
 resumed, but it cannot guarantee an alert while fully closed and offline.
 
+## Vercel deployment and app updates
+
+Vercel deploys deyam as an installable PWA, not as an APK. When the Vercel project
+is connected to a Git repository, pushing to its configured production branch
+automatically starts a new build and deployment. A project deployed manually must
+be redeployed manually; a local Git push alone does not update it.
+
+Use these Vercel build settings:
+
+```text
+Framework preset: Vite
+Install command: npm install
+Build command: npm run build
+Output directory: dist
+```
+
+Use one permanent production or custom-domain URL. Notes, drafts, cycle settings,
+notification permissions, and installed-PWA storage belong to the exact website
+origin. Vercel preview URLs are different origins and therefore have separate
+local data.
+
+### Current update flow on an installed phone
+
+deyam uses a safe, prompt-based service-worker update:
+
+1. New changes are pushed and Vercel finishes the production deployment.
+2. The installed app continues using its cached, offline-capable version.
+3. When the app opens or returns to the foreground while online, it checks Vercel
+   for a newer service worker.
+4. When a new version is ready, app options show:
+
+   > A fresh version is ready. Update ↗
+
+5. The user taps **Update** to activate the new version.
+
+If the prompt does not appear immediately, close and reopen deyam while online.
+The prompt is intentional: it avoids an unexpected reload while someone is typing.
+Notes, drafts, and cycle settings remain in IndexedDB during normal application
+updates. An update does not clear them.
+
+The app could use automatic activation instead, but prompt-based updates are safer
+for this note-taking experience. Any future automatic-update implementation should
+wait for pending local writes and avoid reloading while an editor is active.
+
+Installing from Vercel on Android or iPhone creates a home-screen PWA. It does not
+download an APK. An actual APK must first be built with Capacitor and Android
+Studio; Vercel can host that completed file but cannot compile it.
+
 ## Reliable offline solution
 
 Package the existing web application as Android and iPhone apps using

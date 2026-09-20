@@ -127,7 +127,7 @@ h2 { font-family: var(--serif); font-size: 34px; font-weight: 400; letter-spacin
 .editor-topline .eyebrow { font-size: 8px; letter-spacing: 1.5px; color: #ad9ebd; }
 .editor-star { font-size: 21px; color: #a998bd; line-height: 19px; }
 .editor-panel h2 { margin: 23px 0 16px; font-size: 39px; color: #e2d3f0; font-style: italic; }
-#note-text { resize: none; background: transparent; color: #d5cddd; border: 0; border-radius: 0; padding: 1px 0 14px; outline: none; width: 100%; flex: 1 1 auto; min-height: 205px; line-height: 1.95; font-size: 12px; caret-color: var(--lavender); scrollbar-width: thin; scrollbar-color: #9f84bf40 transparent; }
+#note-text { resize: none; background: transparent; color: #d5cddd; border: 0; border-radius: 0; padding: 1px 0 14px; outline: none; width: 100%; flex: 1 1 auto; min-height: 205px; line-height: 1.6; font-size: 12px; caret-color: var(--lavender); scrollbar-width: thin; scrollbar-color: #9f84bf40 transparent; }
 #note-text::placeholder { color: #8e839e; opacity: 1; }
 #note-text:focus-visible { box-shadow: inset 0 -1px #b79acb45; }
 .editor-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 8px; color: #a69ab5; line-height: 1.6; min-height: 26px; margin-bottom: 15px; }
