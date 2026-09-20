@@ -1,0 +1,119 @@
+<!-- Adapted from stickeranimation idea/index.html. Original vector poses and costume layers. -->
+<svg id="character" xmlns="http://www.w3.org/2000/svg" viewBox="0 -10 500 520" fill="none" role="img" aria-labelledby="ghost-title ghost-description">
+  <title id="ghost-title">deyam's little mood ghost</title>
+  <desc id="ghost-description">A white ghost with lavender edges, rosy cheeks, and hand-drawn deyam lettering.</desc>
+  <defs>
+    <linearGradient id="body-fill" x1="290" y1="125" x2="178" y2="372" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset=".48" stop-color="#fefcff"/><stop offset=".8" stop-color="#f5effd"/><stop offset="1" stop-color="#e8d9fb"/></linearGradient>
+    <radialGradient id="body-shade" cx="0" cy="0" r="1" gradientTransform="translate(117 258) rotate(-24) scale(126 204)" gradientUnits="userSpaceOnUse"><stop stop-color="#d9c4f7" stop-opacity=".65"/><stop offset=".55" stop-color="#e9ddfa" stop-opacity=".35"/><stop offset="1" stop-color="#f6f0ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="entrance-body-volume" cx=".7" cy=".23" r=".85"><stop stop-color="#fff0d7" stop-opacity=".2"/><stop offset=".38" stop-color="#b7a6c3" stop-opacity="0"/><stop offset="1" stop-color="#40304f" stop-opacity=".72"/></radialGradient>
+    <linearGradient id="night-fabric" x1="176" y1="100" x2="285" y2="387" gradientUnits="userSpaceOnUse"><stop stop-color="#e2d0ff"/><stop offset=".46" stop-color="#d7bdfa"/><stop offset="1" stop-color="#c4a0f1"/></linearGradient>
+    <linearGradient id="fabric-shade" x1="0" y1="0" x2="1" y2=".6"><stop stop-color="#b88be9"/><stop offset="1" stop-color="#d4b5f8" stop-opacity=".15"/></linearGradient>
+    <linearGradient id="moon-fill" x1="305" y1="54" x2="372" y2="137" gradientUnits="userSpaceOnUse"><stop stop-color="#fff3bd"/><stop offset="1" stop-color="#ffe5a3"/></linearGradient>
+    <linearGradient id="sun-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe69a"/><stop offset=".55" stop-color="#ffda7e"/><stop offset="1" stop-color="#ffce69"/></linearGradient>
+    <linearGradient id="sun-ray-fill" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffd471"/><stop offset="1" stop-color="#ffb846"/></linearGradient>
+    <linearGradient id="coffee-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#c88f58"/><stop offset="1" stop-color="#e8b681"/></linearGradient>
+    <linearGradient id="mug-fill" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eadbfc"/><stop offset=".45" stop-color="#fdfaff"/><stop offset="1" stop-color="#f4edfd"/></linearGradient>
+    <radialGradient id="cheek-fill"><stop offset=".65" stop-color="#ffb4d3" stop-opacity=".95"/><stop offset="1" stop-color="#ffc6df" stop-opacity="0"/></radialGradient>
+    <filter id="paper-shadow" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB"><feMorphology in="SourceAlpha" operator="dilate" radius=".65" result="paper-outline"/><feFlood flood-color="#b9a8cb"/><feComposite in2="paper-outline" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <path id="four-point-star" d="M0 -14 Q3 -3 14 0 Q3 3 0 14 Q-3 3 -14 0 Q-3 -3 0 -14Z"/>
+    <path id="five-point-star" d="M0 -12 Q2 -13 4 -5 L12 -4 Q15 -3 10 2 L6 5 L7 13 Q6 15 0 10 L-7 13 Q-10 14 -7 5 L-13 0 Q-15 -3 -10 -4 L-4 -5Z"/>
+    <path id="heart-shape" d="M0 14 C-33 -6 -13 -27 0 -12 C13 -27 33 -6 0 14Z"/>
+    <!-- The twenty cubic segments are shared by every morph target. -->
+    <path id="body-shape" d="M149 185 C145 165 146 145 153 122 C169 72 210 44 258 44 C303 42 341 62 361 95 C376 120 382 149 384 178 C385 204 394 224 410 243 C418 252 426 260 421 273 C416 291 397 301 376 284 C379 299 386 320 376 333 C367 347 354 340 341 337 C324 330 319 343 305 350 C289 359 278 350 266 347 C250 343 237 354 221 350 C200 347 199 328 182 325 C167 323 155 336 137 336 C116 337 105 324 114 304 C120 288 136 270 139 260 C142 251 127 245 115 234 C100 222 87 207 87 189 C87 174 97 164 109 165 C123 164 138 177 149 185Z"/>
+    <clipPath id="body-clip"><use href="#body-shape"/></clipPath>
+    <path id="hat-shape" d="M100 188 C110 146 146 105 193 97 C237 88 282 108 300 153 C242 139 185 170 143 223 C133 213 136 190 144 181 C130 184 119 190 116 195Z"/>
+    <path id="pillow-shape" d="M100 250 C79 248 69 259 78 275 C81 281 87 286 90 289 C89 314 101 340 112 353 C112 366 121 378 137 377 L339 329 C355 319 345 294 328 284 L154 229 C134 233 111 241 100 250Z"/>
+    <path id="blanket-shape" d="M136 380 C148 353 185 330 222 307 C262 284 311 266 350 267 C390 267 414 282 413 309 C413 319 410 324 413 330 C430 355 417 373 396 377 C368 379 353 388 328 388 C293 391 267 389 237 395 C197 404 160 401 136 380Z"/>
+    <clipPath id="hat-clip"><use href="#hat-shape"/></clipPath>
+    <clipPath id="blanket-clip"><use href="#blanket-shape"/></clipPath>
+    <path id="moon-shape" d="M374 47 C332 27 292 57 291 96 C287 139 336 157 380 125 C352 126 339 108 345 87 C350 68 361 56 374 47Z"/>
+    <path id="cozy-name-shape" d="M167 372 C174 361 193 362 201 374 L209 381 C225 373 235 373 247 379 C264 369 281 374 287 382 C311 370 333 380 345 391 C360 386 376 378 387 385 C402 394 402 408 393 420 C407 438 394 454 379 452 L346 445 C331 463 307 472 286 462 C269 484 242 493 219 479 C200 490 180 488 169 481 C146 489 127 477 128 451 C111 457 98 451 96 438 C92 428 99 420 106 415 C97 405 100 392 111 386 C127 379 140 390 153 391Z"/>
+  </defs>
+  <g id="reaction">
+    <g class="actor" id="actor">
+      <g class="night-accessory pillow" aria-hidden="true">
+        <use href="#pillow-shape" class="paper-edge"/><use href="#pillow-shape" fill="url(#night-fabric)" class="night-outline"/>
+        <path d="M99 259 Q111 252 131 247 L119 261 L135 265 L117 275 Q133 284 121 298 Q110 311 133 322 L126 333 L145 344 L138 372 Q121 369 120 350 Q98 327 98 289 Q78 270 86 263Z" fill="url(#fabric-shade)"/>
+        <path d="M86 262 Q96 254 109 260 M112 247 Q127 239 139 240" class="fabric-highlight"/>
+      </g>
+      <path id="name-paper" class="classic-name-paper" d="M175 350 C157 353 154 371 159 389 C142 384 125 371 109 374 C88 375 80 391 88 407 C73 419 77 441 91 449 C103 456 116 452 131 450 C133 475 151 491 172 489 C186 490 201 486 212 480 C237 497 268 484 288 465 C317 478 347 465 365 444 C386 450 409 454 423 444 C437 435 437 419 427 408 C439 393 432 376 417 372 C399 367 382 378 365 381 C349 363 329 354 308 359 L223 352Z" fill="#fff"/>
+      <use href="#cozy-name-shape" class="cozy-name-paper" fill="#fff"/>
+      <g class="morning-accessory morning-sky" aria-hidden="true"><g class="morning-sun">
+        <path d="M334 36 C336 21 344 12 357 12 C371 11 380 19 384 34 C397 25 410 26 421 35 C431 44 431 56 426 68 C440 70 446 80 445 94 C443 105 439 111 432 115 C441 127 437 144 426 150 C418 155 409 155 399 152 C396 167 386 175 374 172 L330 157 L287 98 L286 58 Q287 35 309 33 Q321 32 334 36Z" fill="#fff"/>
+        <g class="morning-sun-rays" fill="url(#sun-ray-fill)">
+          <path d="M351 38 Q351 27 358 27 Q369 25 367 39 L365 48 Q364 54 357 54 Q351 53 351 46Z"/><path d="M303 49 Q309 44 315 51 L323 60 Q328 66 321 69 Q317 70 312 65 L304 59 Q299 54 303 49Z"/>
+          <path d="M391 54 L399 46 Q407 39 412 47 Q414 52 408 57 L399 64 Q394 68 389 63 Q385 59 391 54Z"/><path d="M410 86 L420 84 Q430 83 430 91 Q430 97 420 98 L410 99 Q404 99 404 92 Q404 88 410 86Z"/>
+          <path d="M407 122 L418 129 Q425 133 420 138 Q416 143 409 138 L400 132 Q395 128 399 123 Q402 119 407 122Z"/><path d="M370 144 Q377 140 380 148 L384 158 Q386 165 379 166 Q373 169 370 161 L367 152 Q366 147 370 144Z"/><path d="M291 84 Q299 85 307 89 Q311 91 308 96 L299 93Z"/>
+        </g>
+        <circle cx="357" cy="100" r="35" fill="url(#sun-fill)" stroke="#ffbe50" stroke-width="7"/><ellipse cx="342" cy="83" rx="5" ry="10" transform="rotate(43 342 83)" fill="#fffef5"/><ellipse cx="350" cy="89" rx="2" ry="2.6" transform="rotate(43 350 89)" fill="#fff1bc"/>
+      </g></g>
+      <g class="body-rig">
+        <use href="#body-shape" class="body-paper" stroke="#fff" stroke-width="40" fill="#fff" stroke-linejoin="round"/>
+        <g class="night-accessory nightcap" aria-hidden="true">
+          <use href="#hat-shape" class="paper-edge"/><use href="#hat-shape" fill="url(#night-fabric)" class="night-outline"/>
+          <g clip-path="url(#hat-clip)"><path d="M103 193 Q124 164 149 166 Q175 125 169 151 Q154 184 143 219Z" fill="url(#fabric-shade)"/>
+            <g fill="#fff" opacity=".92"><use href="#five-point-star" transform="translate(177 163) scale(.8)"/><use href="#five-point-star" transform="translate(203 127) scale(.8)"/><use href="#five-point-star" transform="translate(244 140) scale(.8)"/><circle cx="211" cy="153" r="3.4"/><circle cx="159" cy="185" r="3.5"/><circle cx="166" cy="125" r="3.5"/><circle cx="191" cy="110" r="3.5"/><circle cx="140" cy="144" r="3"/></g>
+            <use href="#hat-shape" stroke="#f7efff" stroke-width="20" opacity=".65"/>
+          </g>
+          <use href="#hat-shape" class="night-outline"/><path d="M163 140 C145 176 132 203 143 223" class="night-outline cap-fold"/>
+          <circle cx="101" cy="207" r="21" fill="#fff" stroke="#fff" stroke-width="29"/><circle cx="101" cy="207" r="21" fill="url(#body-fill)" class="night-outline"/><ellipse cx="102" cy="202" rx="12" ry="13" fill="#fff"/>
+        </g>
+        <use href="#body-shape" fill="url(#body-fill)"/><use href="#body-shape" fill="url(#body-shade)"/><use href="#body-shape" class="body-rim" stroke="#fff" stroke-width="21" clip-path="url(#body-clip)" opacity=".94"/><use href="#body-shape" class="entrance-body-volume" fill="url(#entrance-body-volume)"/><use href="#body-shape" class="body-outline"/>
+        <ellipse class="forehead-highlight" cx="181" cy="113" rx="6" ry="12" transform="rotate(44 181 113)" fill="#fff" opacity=".85"/>
+        <g class="angry-detail arm-folds" fill="url(#body-fill)"><path d="M146 237 C166 251 166 273 147 281 C135 286 123 279 125 268"/><path d="M371 237 C351 251 352 274 370 281 C382 286 394 279 391 268"/></g>
+        <g class="face-pose"><g class="face-follow">
+          <g class="cheeks"><g class="cheek cheek-left"><ellipse cx="190" cy="189" rx="16" ry="11" fill="url(#cheek-fill)"/><path class="blush-lines" d="M186 185 L182 193 M197 185 L193 193"/></g><g class="cheek cheek-right"><ellipse cx="339" cy="190" rx="16" ry="11" fill="url(#cheek-fill)"/><path class="blush-lines" d="M335 186 L331 194 M346 186 L342 194"/></g></g>
+          <g class="eye-socket left-eye"><path id="eye-left" class="eye-fill" d="M233 162 C233 175 225 185 214 185 C203 185 195 176 195 164 C195 151 203 141 214 141 C225 140 233 150 233 162Z"/><circle class="eye-shine" cx="220" cy="154" r="5.3" fill="#fff"/></g>
+          <g class="eye-socket right-eye"><path id="eye-right" class="eye-fill" d="M334 162 C334 175 326 185 315 185 C304 185 296 176 296 164 C296 151 304 141 315 141 C326 140 334 150 334 162Z"/><circle class="eye-shine" cx="321" cy="154" r="5.3" fill="#fff"/></g>
+          <g class="angry-detail eyebrows" stroke="#30263e" stroke-width="7" stroke-linecap="round"><path d="M193 155 Q210 169 231 171"/><path d="M295 171 Q314 169 332 155"/></g>
+          <path id="mouth" d="M250 175 C252 181 256 184 262 184 C269 184 274 181 277 175 C277 175 277 175 277 175" stroke="#30263e" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="big-smile"><path d="M247 176 Q264 180 281 173 C286 207 249 214 247 176Z" fill="#392347" stroke="#392347" stroke-width="5" stroke-linejoin="round"/><path d="M251 179 Q265 180 277 177 C279 201 253 207 251 179Z" fill="#f6a4cc"/></g>
+        </g></g>
+        <g class="angry-detail anger-mark" stroke="#8d69ad" stroke-width="6" stroke-linecap="round" aria-hidden="true"><path d="M306 93 Q312 107 297 112 M319 89 Q320 104 337 101 M300 124 Q315 117 319 134 M327 116 Q338 109 340 123"/></g>
+      </g>
+      <g class="night-accessory blanket" aria-hidden="true">
+        <use href="#blanket-shape" class="paper-edge"/><use href="#blanket-shape" fill="url(#night-fabric)" class="night-outline"/>
+        <g clip-path="url(#blanket-clip)"><path d="M146 379 Q176 338 223 317 Q193 345 174 365 Q213 352 246 365 L231 384 L321 389 L316 399 L146 401Z M323 283 Q353 275 372 291 Q350 279 323 289Z M367 321 Q391 315 410 330 Q387 322 369 325Z" fill="url(#fabric-shade)"/>
+          <g fill="#fff" opacity=".86"><use href="#five-point-star" transform="translate(275 330)"/><use href="#five-point-star" transform="translate(349 320) scale(1.02)"/><use href="#five-point-star" transform="translate(379 353) scale(.94)"/><use href="#five-point-star" transform="translate(319 369) scale(.9)"/><use href="#five-point-star" transform="translate(211 369) scale(.87)"/><circle cx="243" cy="330" r="4.3"/><circle cx="235" cy="352" r="4"/><circle cx="297" cy="354" r="4.2"/><circle cx="321" cy="318" r="4.2"/><circle cx="351" cy="369" r="3.7"/><circle cx="308" cy="301" r="4"/></g>
+          <use href="#blanket-shape" stroke="#f8efff" stroke-width="19" opacity=".65"/>
+        </g>
+        <use href="#blanket-shape" class="night-outline"/>
+        <g class="sleepy-hands" fill="url(#body-fill)" stroke-linecap="round" stroke-linejoin="round"><path d="M177 337 C177 319 197 296 216 296 C237 295 242 312 229 326 C224 332 216 337 208 340"/><path d="M326 290 C309 291 305 279 313 269 C324 252 346 257 359 268 C369 279 365 292 354 293"/><path d="M183 328 Q191 309 207 304 M316 273 Q329 260 344 270" stroke="#fff" stroke-width="4" opacity=".9"/></g>
+      </g>
+      <g class="everyday-sparkles" aria-hidden="true">
+        <g class="twinkle star-one"><use href="#four-point-star" transform="translate(419 95) scale(1.25)" fill="#fff" stroke="#fff" stroke-width="23" stroke-linejoin="round"/><use href="#four-point-star" transform="translate(419 95) scale(1.25)" fill="#fbf8ff" stroke="#8a76ad" stroke-width="4" stroke-linejoin="round"/></g>
+        <circle class="head-dot" cx="405" cy="142" r="5" fill="#8d79ad" stroke="#fff" stroke-width="15" paint-order="stroke"/>
+        <g class="twinkle star-two"><use href="#four-point-star" transform="translate(78 280) scale(.8)" fill="#a18bbc" stroke="#fff" stroke-width="29" stroke-linejoin="round"/><use href="#four-point-star" transform="translate(78 280) scale(.8)" fill="#a18bbc" stroke="#8b75ac" stroke-width="2"/></g>
+        <circle class="orbit-dot" cx="432" cy="325" r="4" fill="#8d78ae" stroke="#fff" stroke-width="25" paint-order="stroke"/>
+        <g class="angry-detail"><use href="#four-point-star" transform="translate(432 325) scale(.8)" fill="#a18bbc" stroke="#fff" stroke-width="29" stroke-linejoin="round"/><use href="#four-point-star" transform="translate(432 325) scale(.8)" fill="#a18bbc" stroke="#8b75ac" stroke-width="2"/></g>
+      </g>
+      <g class="angry-detail steam" aria-hidden="true"><path d="M427 115 C405 121 397 106 408 92 C397 76 410 55 425 59 C433 59 440 64 443 72 C462 67 468 87 457 99 C463 112 450 123 438 118" stroke="#fff" stroke-width="35" stroke-linecap="round" stroke-linejoin="round"/><path d="M427 115 C405 121 397 106 408 92 C397 76 410 55 425 59 C433 59 440 64 443 72 C462 67 468 87 457 99 C463 112 450 123 438 118" fill="#fff" stroke="#8973ad" stroke-width="6" stroke-linecap="round"/><circle cx="414" cy="143" r="5" fill="#fff" stroke="#8973ad" stroke-width="3"/></g>
+      <g class="night-accessory night-sky" aria-hidden="true">
+        <g class="moon"><use href="#moon-shape" class="paper-edge"/><use href="#moon-shape" fill="url(#moon-fill)" class="night-outline"/><path d="M371 48 C344 57 323 113 350 137 C362 135 372 130 380 125 C349 125 338 107 345 87 C350 68 361 56 371 48Z" fill="#ffda8c" opacity=".35"/><use href="#moon-shape" class="night-outline"/><ellipse cx="315" cy="76" rx="6" ry="11" transform="rotate(34 315 76)" fill="#fffbea"/><ellipse cx="324" cy="84" rx="2.5" ry="3.5" transform="rotate(34 324 84)" fill="#fffbea"/><ellipse cx="330" cy="66" rx="1.7" ry="3" transform="rotate(34 330 66)" fill="#fffbea"/></g>
+        <g class="night-star"><path d="M410 89 L418 104 L428 109 L416 116 L410 128 L404 115 L393 108 L405 101Z" class="paper-edge"/><path d="M410 89 L418 104 L428 109 L416 116 L410 128 L404 115 L393 108 L405 101Z" fill="#f5eaff" class="night-outline"/></g>
+        <g class="night-star"><path d="M377 151 L383 163 L393 168 L382 173 L377 185 L372 172 L362 168 L373 162Z" class="paper-edge"/><path d="M377 151 L383 163 L393 168 L382 173 L377 185 L372 172 L362 168 L373 162Z" fill="#f5eaff" class="night-outline"/></g>
+        <g class="sleep-zs" stroke-linecap="round" stroke-linejoin="round"><g class="sleep-z z-one"><path d="M384 232 L395 229 L385 245 L397 243" stroke="#fff" stroke-width="30"/><path d="M384 232 L395 229 L385 245 L397 243" class="z-ink" stroke-width="6"/></g><g class="sleep-z z-two"><path d="M402 212 L415 209 L405 228 L418 225" stroke="#fff" stroke-width="31"/><path d="M402 212 L415 209 L405 228 L418 225" class="z-ink" stroke-width="7"/></g><g class="sleep-z z-three"><path d="M424 192 L442 189 L428 211 L443 212" stroke="#fff" stroke-width="33"/><path d="M424 192 L442 189 L428 211 L443 212" class="z-ink" stroke-width="8"/></g></g>
+      </g>
+      <g class="love-effects" fill="#efa5c5" stroke="#fff" stroke-width="5" stroke-linejoin="round" aria-hidden="true"><g class="flying-heart heart-one"><use href="#heart-shape" transform="translate(109 121) scale(.85)"/></g><g class="flying-heart heart-two"><use href="#heart-shape" transform="translate(415 178) scale(.65)"/></g><g class="flying-heart heart-three"><use href="#heart-shape" transform="translate(349 22) scale(.65)"/></g></g>
+      <g class="happy-effects" fill="#e9c883" aria-hidden="true"><g class="happy-star happy-star-one"><use href="#five-point-star" transform="translate(114 122)"/></g><g class="happy-star happy-star-two"><use href="#five-point-star" transform="translate(405 219) scale(.8)"/></g><g class="happy-star happy-star-three"><use href="#five-point-star" transform="translate(351 14) scale(.65)"/></g></g>
+      <g class="morning-accessory morning-coffee-group" aria-hidden="true">
+        <g class="morning-steam-wisps" stroke="#ac86c8" stroke-width="4.5" stroke-linecap="round" fill="none"><path class="morning-steam-wisp wisp-1" d="M263 236 C272 231 271 228 268 221"/><path class="morning-steam-wisp wisp-2" d="M282 236 C296 229 280 223 286 215"/></g>
+        <g class="mug-and-arms"><path d="M232 261 C213 252 211 278 225 288" class="mug-outline" stroke-width="5"/><path d="M231 257 L234 314 Q233 329 248 330 Q277 336 296 326 Q302 323 302 309 L305 255Z" fill="url(#mug-fill)" class="mug-outline"/><path d="M234 271 Q268 286 302 269 L302 280 Q270 288 235 279Z" fill="#e8d9fa"/>
+          <ellipse cx="268" cy="257" rx="39" ry="12" fill="#f6effe" class="mug-outline"/><ellipse cx="267" cy="261" rx="32" ry="5" transform="rotate(-3 267 261)" fill="url(#coffee-fill)"/><ellipse cx="265" cy="260" rx="21" ry="2" transform="rotate(-3 265 260)" fill="#edc89e" opacity=".7"/><path d="M234 261 Q260 276 300 262" stroke="#fff" stroke-width="4" stroke-linecap="round"/><path d="M269 309 C259 301 249 291 256 286 C263 279 268 287 269 288 C273 280 282 282 282 289 C283 296 276 304 269 309Z" class="mug-heart"/>
+          <g class="coffee-hands" fill="url(#body-fill)" stroke-linecap="round" stroke-linejoin="round"><path d="M184 297 C191 278 207 264 221 269 C242 275 237 310 214 321"/><path d="M335 277 C318 255 300 266 299 284 C297 298 305 308 315 312"/><path d="M190 292 Q203 275 216 275 M307 281 Q310 269 319 272" stroke="#fff" stroke-width="4" opacity=".9"/></g>
+        </g>
+      </g>
+      <g class="morning-effects" aria-hidden="true"><g class="twinkle morning-star-left"><use href="#four-point-star" transform="translate(87 209) scale(1.2 1.5)" class="paper-edge"/><use href="#four-point-star" transform="translate(87 209) scale(1.2 1.5)" fill="#f0e4ff" class="morning-star-outline"/></g><g class="twinkle morning-star-right"><use href="#four-point-star" transform="translate(408 284) scale(1.15 1.35)" class="paper-edge"/><use href="#four-point-star" transform="translate(408 284) scale(1.15 1.35)" fill="#f0e4ff" class="morning-star-outline"/></g><path d="M375 211 Q369 211 373 203 L382 192 Q388 188 391 193 Q393 197 385 203Z M383 219 Q394 218 400 220 Q406 225 400 227 L384 226 Q377 226 380 222Z" fill="var(--sticker-ink)" stroke="#fff" stroke-width="26" paint-order="stroke"/></g>
+      <use href="#cozy-name-shape" class="night-accessory cozy-name-front" fill="#fff"/>
+      <!-- Personalized lettering remains paths, so it works without a font or network. -->
+      <g id="deyam-lettering" stroke="var(--sticker-ink)" stroke-linecap="round" stroke-linejoin="round">
+        <path class="name-letter" d="M181 394 L181 442 M180 422 C180 409 170 404 160 410 C148 417 151 437 162 441 C174 445 180 435 180 422"/>
+        <path class="name-letter" d="M199 425 L229 424 C232 407 206 403 199 418 C189 439 216 450 229 436"/>
+        <path class="name-letter" d="M244 412 L246 428 C249 443 265 438 272 421 M273 412 L272 443 C271 460 261 467 250 461"/>
+        <path class="name-letter" d="M317 421 C315 404 289 408 290 428 C291 448 315 447 318 428 M318 412 L318 443"/>
+        <path class="name-letter" d="M334 443 L334 413 M334 426 C337 407 350 408 352 425 L352 443 M352 425 C357 407 371 411 373 425 L373 443"/>
+        <g class="name-rays" fill="var(--sticker-ink)" stroke="none"><path d="M106 396 C111 393 129 401 132 406 C134 412 124 412 115 407 C108 404 102 400 106 396Z M100 426 C105 423 123 420 127 424 C132 429 116 433 107 433 C99 434 94 430 100 426Z"/><path d="M391 403 C396 397 412 389 419 393 C424 398 410 405 400 408 C392 411 386 409 391 403Z M393 423 C399 421 416 422 421 427 C426 433 413 434 404 431 C396 430 388 427 393 423Z"/></g>
+      </g>
+    </g>
+  </g>
+</svg>

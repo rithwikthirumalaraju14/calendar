@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#080b14" />
+    <meta name="description" content="deyam — a little place made just for you. Your days, your words, and a tiny ghost to keep you company. Saved on your device." />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="deyam" />
+    <style>
+      html, body { margin: 0; min-height: 100%; background: #080b14; color: #f2edf8; }
+      .app-shell { visibility: hidden; }
+    </style>
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <title>deyam — a little place, just for you</title>
+  </head>
+  <body>
+    <div class="sky" aria-hidden="true"></div>
+    <div class="app-shell">
+      <header class="topbar" id="topbar">
+        <a class="brand" href="./" aria-label="deyam home">
+          <svg class="brand-moon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M24.4 23.5A12 12 0 0 1 12.1 4.3a12 12 0 1 0 12.3 19.2Z" stroke="currentColor" stroke-width="1.2"/><path d="m23 3 .8 2.7 2.7.8-2.7.8L23 10l-.8-2.7-2.7-.8 2.7-.8L23 3Z" fill="currentColor"/></svg>
+          <span>deyam<span class="brand-pages">JUST FOR YOU</span></span>
+        </a>
+        <div class="topbar-actions">
+          <span class="device-label"><span class="status-dot"></span> <span id="connection-label">ON THIS DEVICE</span></span>
+          <button class="surprises-button" id="open-stickers" type="button" aria-haspopup="dialog" aria-controls="stickers-dialog" aria-expanded="false">
+            <svg viewBox="60 20 400 365" fill="none" aria-hidden="true"><path d="M149 185C145 165 146 145 153 122C169 72 210 44 258 44C303 42 341 62 361 95C376 120 382 149 384 178C385 204 394 224 410 243C418 252 426 260 421 273C416 291 397 301 376 284C379 299 386 320 376 333C367 347 354 340 341 337C324 330 319 343 305 350C289 359 278 350 266 347C250 343 237 354 221 350C200 347 199 328 182 325C167 323 155 336 137 336C116 337 105 324 114 304C120 288 136 270 139 260C142 251 127 245 115 234C100 222 87 207 87 189C87 174 97 164 109 165C123 164 138 177 149 185Z" fill="#e9def6" stroke="#aa8bc5" stroke-width="12"/><ellipse cx="214" cy="163" rx="18" ry="22" fill="#42304f"/><ellipse cx="315" cy="163" rx="18" ry="22" fill="#42304f"/><path d="M250 175Q264 198 277 175" stroke="#42304f" stroke-width="9" stroke-linecap="round"/></svg>
+            <span>Little surprises</span><span class="surprise-spark" aria-hidden="true">✧</span>
+          </button>
+          <button class="icon-button menu-button" id="menu-button" type="button" aria-label="App options and backups" aria-haspopup="dialog"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 8h14M5 16h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero" id="hero" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow"><span class="tiny-star" aria-hidden="true">✧</span> A LITTLE PLACE, JUST FOR YOU</p>
+            <h1 id="hero-title">Hey, deyam.<br /><em>Stay a little.</em></h1>
+            <p class="hero-description">Your days. Your words. A little company.</p>
+          </div>
+          <div class="moon-scene" aria-hidden="true">
+            <div class="moon-orbit"></div>
+            <div class="moon-halo"></div>
+            <div class="moon-disc"><canvas id="moon-canvas" width="512" height="512"></canvas><div class="moon-shade"></div></div>
+            <span class="moon-star star-one">✧</span><span class="moon-star star-two">✦</span><span class="moon-star star-three">·</span><span class="moon-star star-four">·</span>
+            <p class="moon-caption">the moon is beautiful, isn't it?</p>
+          </div>
+        </section>
+
+        <div class="workspace">
+          <section class="calendar-panel" id="calendar-panel" aria-labelledby="month-heading" aria-busy="true">
+            <div class="calendar-topline"><span class="eyebrow">DEYAM'S DAYS</span><span id="month-note-count" class="month-count">A fresh page awaits</span></div>
+            <div class="calendar-toolbar">
+              <h2 id="month-heading"></h2>
+              <div class="calendar-navigation">
+                <button class="icon-button" id="previous-month" type="button" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 7-5 5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                <button class="today-button" id="today-button" type="button">Today</button>
+                <button class="icon-button" id="next-month" type="button" aria-label="Next month"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m10 7 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="weekdays" aria-hidden="true"><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span><span>SUN</span></div>
+            <div class="calendar-days" id="calendar-days" role="group" aria-label="Choose a date"></div>
+            <div class="calendar-footer"><span class="note-legend"><i></i> A day with a note</span><span class="cycle-legend" id="cycle-legend" hidden><i></i> Cycle estimate</span><span class="calendar-hint">One day at a time <span aria-hidden="true">↗</span></span></div>
+          </section>
+
+          <div class="editor-backdrop" id="editor-backdrop" hidden></div>
+          <section class="editor-panel" id="editor-panel" aria-labelledby="editor-heading" aria-busy="true">
+            <div class="sheet-handle" aria-hidden="true"></div>
+            <div class="editor-topline"><span class="eyebrow" id="selected-date-label"></span><button class="icon-button close-editor" id="close-editor" type="button" aria-label="Close note"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button><span class="editor-star" aria-hidden="true">✧</span></div>
+            <h2 id="editor-heading">Dear day,</h2>
+            <label class="sr-only" for="note-text">Your note for the selected date</label>
+            <textarea id="note-text" placeholder="How was your day, deyam?&#10;&#10;The little joys. The messy bits.&#10;There's room for all of you here." spellcheck="true" maxlength="1000000" disabled></textarea>
+            <div class="editor-meta"><span id="save-status" role="status" aria-live="polite">Opening your pages…</span><span id="character-count">0 characters</span></div>
+            <div class="editor-actions">
+              <button class="delete-button" id="delete-note" type="button" aria-label="Delete this note" hidden><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5m4-5v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Delete</span></button>
+              <button class="cycle-button" id="track-cycle" type="button"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4a9 9 0 1 1-3 7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3 5v6h6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8v4l3 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="cycle-button-label">Track cycle</span></button>
+              <button class="save-button" id="save-note" type="button" disabled><span id="save-button-label">Save note</span><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+          </section>
+        </div>
+        <aside class="cycle-reminder" id="cycle-reminder" role="status" aria-live="polite" hidden><span class="cycle-reminder-mark" aria-hidden="true">○</span><span id="cycle-reminder-text"></span><button id="dismiss-cycle-reminder" type="button" aria-label="Dismiss cycle reminder">×</button></aside>
+        <p class="mobile-invitation" id="mobile-invitation">Tap a day. Leave a little of yourself.</p>
+      </main>
+
+      <footer class="page-footer" id="page-footer"><span><span aria-hidden="true">☾</span> Made for you, deyam.</span><button id="storage-info" type="button">Your little corner. Just for you. <span aria-hidden="true">↗</span></button></footer>
+    </div>
+
+    <dialog class="options-dialog" id="options-dialog" aria-labelledby="options-heading">
+      <div class="dialog-topline"><span class="eyebrow">DEYAM'S LITTLE CORNER</span><button class="icon-button" id="close-options" type="button" aria-label="Close app options"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button></div>
+      <h2 id="options-heading">Yours to keep.</h2>
+      <p class="dialog-intro">Your notes live in this browser, on this device. They stay here when you close the app.</p>
+      <section class="option-section" aria-labelledby="backup-heading">
+        <h3 id="backup-heading">Keep a little backup</h3>
+        <p>Clearing browser data can remove your pages. Download a copy to keep them safe or move them to another phone.</p>
+        <div class="backup-actions"><button class="secondary-button" id="export-notes" type="button">Download backup <span aria-hidden="true">↓</span></button><button class="text-button" id="import-notes" type="button">Restore backup <span aria-hidden="true">↑</span></button></div>
+        <p class="option-caption">Restoring adds missing dates. Your existing writing is kept.</p>
+        <input type="file" id="backup-file" accept="application/json,.json" hidden />
+        <p class="option-status" id="backup-status" role="status"></p>
+      </section>
+      <section class="option-section" aria-labelledby="install-heading">
+        <h3 id="install-heading">Make a home for your days</h3>
+        <p id="install-instructions"></p>
+        <button class="secondary-button" id="install-button" type="button" hidden>Add to home screen <span aria-hidden="true">↗</span></button>
+        <p class="offline-status" id="offline-status"><span class="status-dot"></span> Preparing offline access…</p>
+        <button class="text-button" id="update-button" type="button" hidden>A fresh version is ready. Update ↗</button>
+      </section>
+      <section class="option-section" aria-labelledby="cycle-privacy-heading">
+        <h3 id="cycle-privacy-heading">About cycle reminders</h3>
+        <p>Cycle dates are private estimates stored only on this device. Open deyam regularly so it can show the one-day-prior alert; browsers cannot guarantee a timed notification while the app stays fully closed.</p>
+      </section>
+      <div class="dialog-signature"><span aria-hidden="true">✧</span> deyam · just for you <span class="version">v1.1</span></div>
+    </dialog>
+
+    <dialog class="stickers-dialog" id="stickers-dialog" aria-labelledby="stickers-heading" aria-describedby="stickers-intro">
+      <header class="stickers-header">
+        <div><p class="eyebrow">A LITTLE COMPANY FOR DEYAM</p><h2 id="stickers-heading">Tiny ghost. <em>Big feelings.</em></h2><p id="stickers-intro">A little hello, a warm hug, a whole lot of you.</p></div>
+        <button class="icon-button" id="close-stickers" type="button" aria-label="Close little surprises" autofocus><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m6 6 12 12M6 18 18 6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+      </header>
+      <div id="sticker-root"></div>
+      <p class="stickers-signature">Every version of you belongs here. <span aria-hidden="true">♡</span></p>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" hidden><span id="toast-message"></span><button id="toast-action" type="button" hidden>Undo</button><button id="toast-dismiss" type="button" aria-label="Dismiss message">×</button></div>
+    <noscript><div class="noscript-message">deyam needs JavaScript to open your calendar and save notes on this device.</div></noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

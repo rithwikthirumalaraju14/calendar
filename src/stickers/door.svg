@@ -1,0 +1,41 @@
+<!-- The reference's hinged doorway, projected by entrance.js. -->
+<svg class="entrance-world" id="entrance-world" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" fill="none" aria-hidden="true">
+  <defs>
+    <radialGradient id="door-wall-light"><stop stop-color="#a18aac" stop-opacity=".17"/><stop offset="1" stop-color="#a18aac" stop-opacity="0"/></radialGradient>
+    <radialGradient id="door-interior" cx=".85" cy=".4" r="1"><stop stop-color="#c1a287"/><stop offset=".38" stop-color="#514157"/><stop offset="1" stop-color="#171020"/></radialGradient>
+    <linearGradient id="door-frame-fill" x1="0" y1="0" x2="1" y2=".7"><stop stop-color="#746477"/><stop offset=".3" stop-color="#3f354b"/><stop offset="1" stop-color="#211c29"/></linearGradient>
+    <linearGradient id="door-surface-fill" x1="0" y1="0" x2="1" y2=".6"><stop stop-color="#463a51"/><stop offset=".48" stop-color="#302736"/><stop offset="1" stop-color="#201c28"/></linearGradient>
+    <linearGradient id="door-edge-fill"><stop stop-color="#d9bea0"/><stop offset=".45" stop-color="#86726e"/><stop offset="1" stop-color="#322937"/></linearGradient>
+    <radialGradient id="door-brass" cx=".3" cy=".2" r=".8"><stop stop-color="#fff0cb"/><stop offset=".35" stop-color="#c9a773"/><stop offset="1" stop-color="#655040"/></radialGradient>
+    <linearGradient id="door-spill-fill" x1="0" y1="0" x2=".3" y2="1"><stop stop-color="#f6d5a6" stop-opacity=".42"/><stop offset="1" stop-color="#f6d5a6" stop-opacity="0"/></linearGradient>
+    <radialGradient id="door-floor-fill"><stop stop-color="#ba9c91" stop-opacity=".22"/><stop offset="1" stop-color="#ba9c91" stop-opacity="0"/></radialGradient>
+    <filter id="door-soft-shadow" x="-60%" y="-200%" width="220%" height="500%"><feGaussianBlur stdDeviation="7"/></filter>
+    <filter id="door-light-softness" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="3"/></filter>
+    <clipPath id="doorway-clip"><rect x="304" y="155" width="188" height="264" rx="7"/></clipPath>
+  </defs>
+  <g id="door-set" opacity="0">
+    <ellipse cx="410" cy="290" rx="315" ry="260" fill="url(#door-wall-light)"/>
+    <ellipse cx="406" cy="424" rx="215" ry="64" fill="url(#door-floor-fill)"/>
+    <ellipse cx="398" cy="425" rx="116" ry="9" fill="#000" opacity=".65" filter="url(#door-soft-shadow)"/>
+    <path id="door-light-spill" fill="url(#door-spill-fill)" filter="url(#door-light-softness)"/>
+    <path id="door-cast-shadow" fill="#050408" opacity=".4" filter="url(#door-soft-shadow)"/>
+    <rect x="295" y="146" width="206" height="280" rx="14" fill="#09070d" stroke="#0a080f" stroke-width="8"/>
+    <rect x="296" y="147" width="204" height="278" rx="13" fill="url(#door-frame-fill)" stroke="#88758e" stroke-opacity=".2"/>
+    <rect x="304" y="155" width="188" height="264" rx="7" fill="url(#door-interior)" stroke="#100c17" stroke-width="4"/>
+    <path d="M308 415 L488 415 L497 424 L298 424Z" fill="url(#door-edge-fill)"/>
+    <path d="M307 166 L307 409 M311 158 L482 158" stroke="#e2c7b4" stroke-opacity=".17" stroke-width="2"/>
+    <g id="entrance-occlusion" clip-path="url(#doorway-clip)"><g id="entrance-character-slot"/></g>
+    <g id="door-leaf">
+      <path id="door-thickness" fill="url(#door-edge-fill)" stroke="#211a28" stroke-width=".6"/>
+      <path data-door-path d="M5 0 L183 0 Q188 0 188 6 L188 258 Q188 264 183 264 L5 264 Q0 264 0 259 L0 5 Q0 0 5 0Z" fill="url(#door-surface-fill)" stroke="#95828f" stroke-width=".8"/>
+      <path data-door-path d="M5 258 L5 7 Q5 5 8 5 L181 5" stroke="#b9a1b4" stroke-opacity=".19" stroke-width="1.2"/>
+      <path data-door-path d="M22 25 L165 25 L165 112 L22 112Z M22 147 L165 147 L165 239 L22 239Z" fill="#292331" fill-opacity=".6" stroke="#15101e" stroke-width="3"/>
+      <path data-door-path d="M24 111 L164 111 L164 27 M24 238 L164 238 L164 149" stroke="#a88d9f" stroke-opacity=".22" stroke-width="1.5"/>
+      <path data-door-path d="M28 32 L158 32 L158 106 L28 106Z M28 154 L158 154 L158 232 L28 232Z" stroke="#9a849d" stroke-opacity=".08"/>
+      <g id="door-handle"><ellipse id="door-handle-plate" fill="#17111f" stroke="#a38766" stroke-width=".8"/><circle id="door-knob-shadow" r="6" fill="#100c16" opacity=".6"/><circle id="door-knob" r="4.8" fill="url(#door-brass)"/></g>
+    </g>
+    <path d="M301 207 L305 207 L305 225 L301 225Z M301 356 L305 356 L305 374 L301 374Z" fill="url(#door-brass)" opacity=".65"/>
+  </g>
+  <ellipse id="entrance-shadow" cx="400" cy="447" rx="64" ry="9" fill="#030205" opacity="0" filter="url(#door-soft-shadow)"/>
+  <g id="entrance-foreground"/>
+</svg>
