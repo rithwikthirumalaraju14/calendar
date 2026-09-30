@@ -55,6 +55,36 @@ test('reload begins on the dark background without unstyled artwork', async ({ p
   await expect(page.locator('.app-shell')).toBeVisible();
 });
 
+test('installed app skips the second forced splash delay', async ({ page }) => {
+  await page.addInitScript(() => {
+    const matchMedia = window.matchMedia.bind(window);
+    window.matchMedia = (query) => {
+      const result = matchMedia(query);
+      if (query === '(display-mode: standalone)') {
+        Object.defineProperty(result, 'matches', { value: true });
+      }
+      return result;
+    };
+    let dataReady;
+    new MutationObserver((records) => {
+      for (const record of records) {
+        if (record.target.id === 'calendar-panel' && record.target.getAttribute('aria-busy') === 'false') {
+          dataReady ??= performance.now();
+        }
+        if (record.target === document.body && record.attributeName === 'data-ready' && dataReady !== undefined) {
+          window.__installedLoaderDelay = performance.now() - dataReady;
+        }
+      }
+    }).observe(document, { subtree: true, attributes: true, attributeFilter: ['aria-busy', 'data-ready'] });
+  });
+  await page.reload();
+  await ready(page);
+  await expect(page.locator('#app-loader')).toHaveCount(0);
+  await expect(page.locator('.app-shell')).toBeVisible();
+  const delay = await page.evaluate(() => window.__installedLoaderDelay);
+  expect(delay).toBeLessThan(600);
+});
+
 test('save, reload, edit, delete and undo a note', async ({ page }, testInfo) => {
   test.setTimeout(60000);
   const errors = [];

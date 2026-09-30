@@ -171,11 +171,15 @@ async function finishLoading() {
   const loader = $('app-loader');
   if (!loader) return;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const minimum = reducedMotion ? 0 : 850;
+  const installed = window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  // Android already displays its OS-controlled icon splash before this page.
+  // Do not force a second splash to stay on screen in the installed app.
+  const minimum = reducedMotion || installed ? 0 : 850;
   const wait = Math.max(0, minimum - (performance.now() - loaderStartedAt));
   if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+  if (installed) loader.style.transitionDuration = '160ms';
   loader.classList.add('is-leaving');
-  if (!reducedMotion) await new Promise((resolve) => setTimeout(resolve, 560));
+  if (!reducedMotion) await new Promise((resolve) => setTimeout(resolve, installed ? 180 : 560));
   loader.remove();
   document.querySelector('.app-shell').inert = false;
 }

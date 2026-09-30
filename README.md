@@ -90,6 +90,10 @@ For guaranteed notifications while the app is fully closed and offline, see
 - Opening the app shows a brief midnight splash with a floating ghost, crescent,
   and stars. It fades out once local data is ready, works offline, and displays
   without animation when reduced motion is enabled.
+- Android also shows an OS-managed static icon splash before an installed PWA
+  loads. Website code cannot remove that screen. In installed mode, deyam skips
+  its own minimum loading delay and uses a quick fade once local data is ready,
+  avoiding a second forced splash after Android's launch screen.
 - Calendar: arrow keys move focus, Home/End move within the week,
   Page Up/Down change month, Shift + Page Up/Down change year, Enter selects.
 - Editor: Ctrl/⌘ + Enter saves. Escape closes the mobile editor.
