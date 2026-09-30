@@ -84,6 +84,12 @@ For guaranteed notifications while the app is fully closed and offline, see
 
 ## Accessibility and controls
 
+- Swipe left across the date grid for the next month, or right for the previous
+  month. Vertical gestures keep scrolling the page; ordinary date taps still open
+  the note panel. Month changes have a short reduced-motion-aware transition.
+- Opening the app shows a brief midnight splash with a floating ghost, crescent,
+  and stars. It fades out once local data is ready, works offline, and displays
+  without animation when reduced motion is enabled.
 - Calendar: arrow keys move focus, Home/End move within the week,
   Page Up/Down change month, Shift + Page Up/Down change year, Enter selects.
 - Editor: Ctrl/⌘ + Enter saves. Escape closes the mobile editor.

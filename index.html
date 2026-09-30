@@ -11,14 +11,42 @@
     <style>
       html, body { margin: 0; min-height: 100%; background: #080b14; color: #f2edf8; }
       .app-shell { visibility: hidden; }
+      .app-loader { position: fixed; z-index: 999; inset: 0; display: grid; place-items: center; overflow: hidden; background: #080b14; color: #f2edf8; transition: opacity .55s ease, visibility .55s ease; }
+      .app-loader.is-leaving { opacity: 0; visibility: hidden; pointer-events: none; }
+      .loader-content { display: flex; flex-direction: column; align-items: center; text-align: center; transform: translateY(-2vh); }
+      .loader-world { position: relative; width: 142px; height: 142px; }
+      .loader-orbit { position: absolute; inset: 6px; border: 1px solid rgba(204, 185, 226, .13); border-radius: 50%; animation: loader-turn 6s linear infinite; }
+      .loader-orbit::after { content: ''; position: absolute; width: 4px; height: 4px; top: 13px; right: 21px; border-radius: 50%; background: #d5bcea; box-shadow: 0 0 10px rgba(213, 188, 234, .5); }
+      .loader-moon { position: absolute; width: 72px; height: 72px; left: 35px; top: 21px; border-radius: 50%; background: radial-gradient(circle at 33% 28%, #f1eaf2, #a49aaa 68%, #555362); box-shadow: 0 0 35px rgba(190, 168, 218, .12); }
+      .loader-moon::after { content: ''; position: absolute; inset: -5px -8px -5px 23px; border-radius: 50%; background: #080b14; }
+      .loader-ghost { position: absolute; z-index: 2; width: 58px; height: 58px; left: 64px; top: 67px; animation: loader-float 2.2s ease-in-out infinite; filter: drop-shadow(0 8px 10px rgba(0, 0, 0, .25)); }
+      .loader-star { position: absolute; color: #c6acd9; animation: loader-glow 1.8s ease-in-out infinite; }
+      .loader-star-one { left: 15px; top: 63px; font-size: 18px; }
+      .loader-star-two { right: 9px; top: 30px; font-size: 11px; animation-delay: -.9s; }
+      .loader-name { margin: 15px 0 2px; font-family: Georgia, serif; font-size: 30px; font-weight: 400; letter-spacing: .5px; }
+      .loader-note { margin: 7px 0 0; color: #9e93ac; font: 9px/1.5 system-ui, sans-serif; letter-spacing: 1.6px; }
+      @keyframes loader-float { 0%, 100% { transform: translateY(3px) rotate(-2deg); } 50% { transform: translateY(-7px) rotate(2deg); } }
+      @keyframes loader-turn { to { transform: rotate(360deg); } }
+      @keyframes loader-glow { 0%, 100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.1); } }
+      @media (prefers-reduced-motion: reduce) { .loader-orbit, .loader-ghost, .loader-star { animation: none; } .app-loader { transition: none; } }
     </style>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <title>Deyam ,  a little place, just for you...</title>
   </head>
   <body>
+    <div class="app-loader" id="app-loader" role="status" aria-label="Opening deyam">
+      <div class="loader-content" aria-hidden="true">
+        <div class="loader-world">
+          <div class="loader-orbit"></div><div class="loader-moon"></div>
+          <span class="loader-star loader-star-one">✧</span><span class="loader-star loader-star-two">✦</span>
+          <svg class="loader-ghost" viewBox="75 38 355 320" fill="none"><path d="M149 185C145 165 146 145 153 122C169 72 210 44 258 44C303 42 341 62 361 95C376 120 382 149 384 178C385 204 394 224 410 243C418 252 426 260 421 273C416 291 397 301 376 284C379 299 386 320 376 333C367 347 354 340 341 337C324 330 319 343 305 350C289 359 278 350 266 347C250 343 237 354 221 350C200 347 199 328 182 325C167 323 155 336 137 336C116 337 105 324 114 304C120 288 136 270 139 260C142 251 127 245 115 234C100 222 87 207 87 189C87 174 97 164 109 165C123 164 138 177 149 185Z" fill="#f7f1fc" stroke="#a88bc2" stroke-width="12"/><ellipse cx="214" cy="163" rx="17" ry="21" fill="#42304f"/><ellipse cx="315" cy="163" rx="17" ry="21" fill="#42304f"/><circle cx="220" cy="154" r="5" fill="#fff"/><circle cx="321" cy="154" r="5" fill="#fff"/><path d="M250 176Q264 196 278 175" stroke="#42304f" stroke-width="8" stroke-linecap="round"/></svg>
+        </div>
+        <p class="loader-name">deyam</p><p class="loader-note">Hi Deyam ... how was u r day raa....?</p>
+      </div>
+    </div>
     <div class="sky" aria-hidden="true"></div>
-    <div class="app-shell">
+    <div class="app-shell" inert>
       <header class="topbar" id="topbar">
         <a class="brand" href="./" aria-label="deyam home">
           <svg class="brand-moon" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M24.4 23.5A12 12 0 0 1 12.1 4.3a12 12 0 1 0 12.3 19.2Z" stroke="currentColor" stroke-width="1.2"/><path d="m23 3 .8 2.7 2.7.8-2.7.8L23 10l-.8-2.7-2.7-.8 2.7-.8L23 3Z" fill="currentColor"/></svg>
@@ -54,7 +82,7 @@
           <section class="calendar-panel" id="calendar-panel" aria-labelledby="month-heading" aria-busy="true">
             <div class="calendar-topline"><span class="eyebrow">DEYAM'S DAYS</span><span id="month-note-count" class="month-count">A fresh page awaits</span></div>
             <div class="calendar-toolbar">
-              <h2 id="month-heading"></h2>
+              <h2 id="month-heading" aria-live="polite" aria-atomic="true"></h2>
               <div class="calendar-navigation">
                 <button class="icon-button" id="previous-month" type="button" aria-label="Previous month"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m14 7-5 5 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
                 <button class="today-button" id="today-button" type="button">Today</button>
@@ -125,7 +153,7 @@
     </dialog>
 
     <div class="toast" id="toast" role="status" hidden><span id="toast-message"></span><button id="toast-action" type="button" hidden>Undo</button><button id="toast-dismiss" type="button" aria-label="Dismiss message">×</button></div>
-    <noscript><div class="noscript-message">deyam needs JavaScript to open your calendar and save notes on this device.</div></noscript>
+    <noscript><style>.app-loader { display: none; }</style><div class="noscript-message">deyam needs JavaScript to open your calendar and save notes on this device.</div></noscript>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

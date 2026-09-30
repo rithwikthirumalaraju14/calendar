@@ -34,6 +34,9 @@ let persistRequested = false;
 let draftRevision = 0;
 let lastToday = selectedKey;
 let dismissedCycleMessage = '';
+let calendarGesture;
+let suppressCalendarClick = false;
+const loaderStartedAt = performance.now();
 const shortDate = new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' });
 
 function queueMutation(action) {
@@ -149,6 +152,32 @@ function renderCalendar() {
   $('previous-month').disabled = visibleMonth.getFullYear() === 1 && visibleMonth.getMonth() === 0;
   $('next-month').disabled = visibleMonth.getFullYear() === 9999 && visibleMonth.getMonth() === 11;
   if (oldFocus) elements.grid.querySelector(`[data-date="${oldFocus}"]`)?.focus({ preventScroll: true });
+}
+
+function changeMonth(amount, animate = false) {
+  const next = startOfMonth(addMonths(visibleMonth, amount));
+  if (next.getFullYear() < 1 || next.getFullYear() > 9999) return;
+  visibleMonth = next;
+  renderCalendar();
+  if (!animate || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const className = amount > 0 ? 'is-entering-next' : 'is-entering-previous';
+  elements.grid.classList.remove('is-entering-next', 'is-entering-previous');
+  // Restart the short transition even after two quick swipes in one direction.
+  void elements.grid.offsetWidth;
+  elements.grid.classList.add(className);
+}
+
+async function finishLoading() {
+  const loader = $('app-loader');
+  if (!loader) return;
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const minimum = reducedMotion ? 0 : 850;
+  const wait = Math.max(0, minimum - (performance.now() - loaderStartedAt));
+  if (wait) await new Promise((resolve) => setTimeout(resolve, wait));
+  loader.classList.add('is-leaving');
+  if (!reducedMotion) await new Promise((resolve) => setTimeout(resolve, 560));
+  loader.remove();
+  document.querySelector('.app-shell').inert = false;
 }
 
 function setBackgroundInert(inert) {
@@ -448,9 +477,79 @@ async function importPages(file) {
 }
 
 elements.grid.addEventListener('click', (event) => {
+  if (suppressCalendarClick) {
+    event.preventDefault();
+    event.stopPropagation();
+    return;
+  }
   const button = event.target.closest('button[data-date]');
   if (button) selectDate(button.dataset.date);
 });
+elements.grid.addEventListener('pointerdown', (event) => {
+  if (event.pointerType === 'mouse' || (event.pointerType && event.isPrimary === false)) return;
+  calendarGesture = {
+    pointerId: event.pointerId,
+    date: event.target.closest('button[data-date]')?.dataset.date,
+    touch: event.pointerType === 'touch',
+    startX: event.clientX,
+    startY: event.clientY,
+    currentX: event.clientX,
+    currentY: event.clientY,
+    startedAt: performance.now(),
+  };
+  // Keep the browser's implicit capture on the touched date button. Capturing
+  // on the whole grid would retarget ordinary date taps to the grid itself.
+});
+window.addEventListener('pointermove', (event) => {
+  if (!calendarGesture || event.pointerId !== calendarGesture.pointerId) return;
+  calendarGesture.currentX = event.clientX;
+  calendarGesture.currentY = event.clientY;
+});
+function completeCalendarGesture(endX, endY) {
+  if (!calendarGesture) return;
+  const gesture = calendarGesture;
+  calendarGesture = undefined;
+  const deltaX = endX - gesture.startX;
+  const deltaY = endY - gesture.startY;
+  const duration = performance.now() - gesture.startedAt;
+  // Some mobile WebViews suppress the compatibility click following a swipe.
+  // Handle a real touch tap here; suppress its later click to avoid reopening.
+  if (gesture.touch && gesture.date && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10 && duration < 700) {
+    suppressCalendarClick = true;
+    selectDate(gesture.date);
+    setTimeout(() => { suppressCalendarClick = false; }, 350);
+    return;
+  }
+  if (Math.abs(deltaX) < 48 || Math.abs(deltaX) < Math.abs(deltaY) * 1.2 || duration > 1200) return;
+  suppressCalendarClick = true;
+  changeMonth(deltaX < 0 ? 1 : -1, true);
+  setTimeout(() => { suppressCalendarClick = false; }, 350);
+}
+function finishCalendarGesture(event) {
+  if (!calendarGesture || event.pointerId !== calendarGesture.pointerId) return;
+  completeCalendarGesture(Number.isFinite(event.clientX) ? event.clientX : calendarGesture.currentX, Number.isFinite(event.clientY) ? event.clientY : calendarGesture.currentY);
+}
+window.addEventListener('pointerup', finishCalendarGesture);
+window.addEventListener('pointercancel', () => { calendarGesture = undefined; });
+// Older iOS WebViews can expose touch events without complete Pointer Events.
+elements.grid.addEventListener('touchstart', (event) => {
+  if (calendarGesture || event.touches.length !== 1) return;
+  const touch = event.touches[0];
+  calendarGesture = { source: 'touch', touch: true, date: event.target.closest('button[data-date]')?.dataset.date, pointerId: touch.identifier, startX: touch.clientX, startY: touch.clientY, currentX: touch.clientX, currentY: touch.clientY, startedAt: performance.now() };
+}, { passive: true });
+elements.grid.addEventListener('touchmove', (event) => {
+  if (calendarGesture?.source !== 'touch' || event.touches.length !== 1) return;
+  calendarGesture.currentX = event.touches[0].clientX;
+  calendarGesture.currentY = event.touches[0].clientY;
+}, { passive: true });
+elements.grid.addEventListener('touchend', (event) => {
+  if (calendarGesture?.source !== 'touch') return;
+  const touch = [...event.changedTouches].find((item) => item.identifier === calendarGesture.pointerId);
+  if (touch) completeCalendarGesture(touch.clientX, touch.clientY);
+  else calendarGesture = undefined;
+}, { passive: true });
+elements.grid.addEventListener('touchcancel', () => { if (calendarGesture?.source === 'touch') calendarGesture = undefined; }, { passive: true });
+elements.grid.addEventListener('animationend', () => elements.grid.classList.remove('is-entering-next', 'is-entering-previous'));
 elements.grid.addEventListener('keydown', (event) => {
   const key = event.target.closest('button[data-date]')?.dataset.date;
   if (!key) return;
@@ -471,8 +570,8 @@ elements.grid.addEventListener('keydown', (event) => {
   renderCalendar();
   elements.grid.querySelector(`[data-date="${focusKey}"]`)?.focus();
 });
-$('previous-month').addEventListener('click', () => { visibleMonth = startOfMonth(addMonths(visibleMonth, -1)); renderCalendar(); });
-$('next-month').addEventListener('click', () => { visibleMonth = startOfMonth(addMonths(visibleMonth, 1)); renderCalendar(); });
+$('previous-month').addEventListener('click', () => changeMonth(-1));
+$('next-month').addEventListener('click', () => changeMonth(1));
 $('today-button').addEventListener('click', () => selectDate(dateKey(new Date()), false));
 elements.textarea.addEventListener('input', writeDraft);
 elements.textarea.addEventListener('keydown', (event) => {
@@ -563,6 +662,7 @@ setupPwa({
   notify,
 });
 
+let loadState;
 try {
   const pages = await storage.openStorage();
   notes = new Map(pages.notes.map((note) => [note.date, note]));
@@ -572,14 +672,16 @@ try {
   renderCalendar();
   showPage();
   updateCycleReminder({ allowSystemNotification: true });
-  document.body.dataset.ready = 'true';
+  loadState = 'true';
 } catch (error) {
   console.error('Could not open local storage:', error);
   storageUnavailable = true;
   setStatus('Local storage couldn’t open. Reload to try again.', 'error');
   notify('Your browser couldn’t open local storage. Check browser settings, then reload.', null, 0);
-  document.body.dataset.ready = 'error';
+  loadState = 'error';
 } finally {
   $('calendar-panel').setAttribute('aria-busy', 'false');
   elements.editor.setAttribute('aria-busy', 'false');
+  await finishLoading();
+  document.body.dataset.ready = loadState;
 }

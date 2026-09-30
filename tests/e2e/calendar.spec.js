@@ -28,7 +28,7 @@ test.beforeEach(async ({ page }) => {
   await ready(page);
 });
 
-test('reload begins on the dark background without unstyled artwork', async ({ page }) => {
+test('reload begins on the dark background without unstyled artwork', async ({ page }, testInfo) => {
   await page.route(/\/assets\/index-.*\.(?:js|css)$/, async (route) => {
     await new Promise((resolve) => setTimeout(resolve, 700));
     await route.continue();
@@ -40,16 +40,23 @@ test('reload begins on the dark background without unstyled artwork', async ({ p
     background: getComputedStyle(document.body).backgroundColor,
     shellVisibility: getComputedStyle(document.querySelector('.app-shell')).visibility,
     logoWidth: document.querySelector('.brand-moon').getBoundingClientRect().width,
+    loaderVisible: getComputedStyle(document.querySelector('#app-loader')).visibility === 'visible',
   }));
   expect(firstPaint.background).toBe('rgb(8, 11, 20)');
+  expect(firstPaint.loaderVisible).toBe(true);
   // A warm cache may style the page before this sample; otherwise the app shell
   // must remain hidden so the browser never paints the raw, oversized SVG.
   expect(firstPaint.shellVisibility === 'hidden' || firstPaint.logoWidth <= 31).toBe(true);
+  if (testInfo.project.name === 'desktop-chromium') {
+    await page.screenshot({ path: testInfo.outputPath('startup.png') });
+  }
   await ready(page);
+  await expect(page.locator('#app-loader')).toHaveCount(0);
   await expect(page.locator('.app-shell')).toBeVisible();
 });
 
 test('save, reload, edit, delete and undo a note', async ({ page }, testInfo) => {
+  test.setTimeout(60000);
   const errors = [];
   page.on('pageerror', (error) => errors.push(error.message));
   await expect(page.locator('#moon-canvas')).toHaveClass('is-ready');
@@ -243,6 +250,92 @@ test('calendar keyboard navigation crosses months; mobile sheet traps focus', as
   await expect(page.locator('#month-heading')).toContainText('September');
   await expect(today).toHaveAttribute('aria-pressed', 'true');
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+});
+
+test('horizontal touch swipes change months without opening a date', async ({ page, isMobile }) => {
+  const grid = page.locator('#calendar-days');
+  async function swipe(fromX, toX, deltaY = 4) {
+    // Dispatch a single gesture in one browser call. Separate automation calls
+    // can turn a quick swipe into a multi-second drag on Windows WebKit.
+    await grid.evaluate((element, { fromX, toX, deltaY }) => {
+      const bounds = element.getBoundingClientRect();
+      const startX = bounds.x + bounds.width * fromX;
+      const endX = bounds.x + bounds.width * toX;
+      const startY = bounds.y + bounds.height / 2;
+      const pointer = { pointerId: 7, pointerType: 'touch', isPrimary: true, bubbles: true };
+      element.dispatchEvent(new PointerEvent('pointerdown', { ...pointer, clientX: startX, clientY: startY }));
+      element.dispatchEvent(new PointerEvent('pointermove', { ...pointer, clientX: (startX + endX) / 2, clientY: startY + deltaY / 2 }));
+      element.dispatchEvent(new PointerEvent('pointerup', { ...pointer, clientX: endX, clientY: startY + deltaY }));
+    }, { fromX, toX, deltaY });
+  }
+
+  await swipe(.82, .18);
+  await expect(page.locator('#month-heading')).toContainText('October');
+  await expect(page.locator('#editor-panel')).not.toHaveClass(/is-open/);
+  await page.waitForTimeout(380);
+  await swipe(.18, .82);
+  await expect(page.locator('#month-heading')).toContainText('September');
+
+  // A mostly vertical gesture must remain page scrolling, not month navigation.
+  await page.waitForTimeout(380);
+  await swipe(.52, .44, 120);
+  await expect(page.locator('#month-heading')).toContainText('September');
+  if (isMobile) {
+    await page.locator('[data-date="2026-09-20"]').tap();
+    await expect(page.locator('#editor-panel')).toHaveClass(/is-open/);
+    await expect(page.locator('#selected-date-label')).toContainText('SEPTEMBER 20, 2026');
+  }
+});
+
+test('browser-generated touch swipes preserve real date taps and vertical scrolling', async ({ page, context, browserName, isMobile }) => {
+  test.skip(browserName !== 'chromium' || !isMobile, 'Uses Android Chromium’s native touch input protocol.');
+  const session = await context.newCDPSession(page);
+  await page.locator('#calendar-days').scrollIntoViewIfNeeded();
+  const bounds = await page.locator('#calendar-days').boundingBox();
+  const y = bounds.y + bounds.height / 2;
+  const startX = bounds.x + bounds.width * .8;
+  const endX = bounds.x + bounds.width * .2;
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: startX, y }] });
+  for (let step = 1; step <= 5; step++) {
+    await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: startX + (endX - startX) * step / 5, y }] });
+  }
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(page.locator('#month-heading')).toContainText('October');
+  await expect(page.locator('#editor-panel')).not.toHaveClass(/is-open/);
+  await page.waitForTimeout(400);
+  await page.locator('[data-date="2026-10-15"]').tap();
+  await expect(page.locator('#editor-panel')).toHaveClass(/is-open/);
+  await expect(page.locator('#selected-date-label')).toContainText('OCTOBER 15, 2026');
+  await closeSheet(page);
+  await page.locator('#calendar-days').scrollIntoViewIfNeeded();
+  const verticalBounds = await page.locator('#calendar-days').boundingBox();
+  const x = verticalBounds.x + verticalBounds.width / 2;
+  const startY = verticalBounds.y + verticalBounds.height * .75;
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y: startY }] });
+  await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x, y: startY - 80 }] });
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(page.locator('#month-heading')).toContainText('October');
+});
+
+test('touch-only fallback and reduced-motion startup work', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  await ready(page);
+  await expect(page.locator('#app-loader')).toHaveCount(0);
+  await expect(page.locator('.app-shell')).not.toHaveAttribute('inert', '');
+  await page.locator('#calendar-days').evaluate((grid) => {
+    const bounds = grid.getBoundingClientRect();
+    const touch = (x) => ({ identifier: 11, clientX: bounds.x + x * bounds.width, clientY: bounds.y + 80 });
+    // Dispatch touch-only events, as on a WebView without Pointer Events.
+    for (const [type, x] of [['touchstart', .8], ['touchmove', .5], ['touchend', .2]]) {
+      const event = new Event(type, { bubbles: true });
+      Object.defineProperty(event, 'touches', { value: type === 'touchend' ? [] : [touch(x)] });
+      Object.defineProperty(event, 'changedTouches', { value: [touch(x)] });
+      grid.dispatchEvent(event);
+    }
+  });
+  await expect(page.locator('#month-heading')).toContainText('October');
+  await expect(page.locator('#calendar-days')).not.toHaveClass(/is-entering/);
 });
 
 test('a storage failure is visible and never claims a successful save', async ({ page }) => {
