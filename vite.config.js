@@ -1,10 +1,34 @@
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
+
+// Android keeps installed splash icons separately from the service-worker cache.
+// Change their URLs when the artwork changes so the manifest advertises an update.
+const iconAssets = [
+  { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+  { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+  { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+].map((icon) => {
+  const source = readFileSync(new URL(`./public/${icon.src}`, import.meta.url));
+  const hash = createHash('sha256').update(source).digest('hex').slice(0, 12);
+  const fileName = icon.src.replace('.png', `-${hash}.png`);
+  return { source, fileName, manifest: { ...icon, src: fileName } };
+});
 
 export default defineConfig({
   base: './',
   build: { target: 'es2022' },
   plugins: [
+    {
+      name: 'versioned-pwa-icons',
+      apply: 'build',
+      generateBundle() {
+        for (const { fileName, source } of iconAssets) {
+          this.emitFile({ type: 'asset', fileName, source });
+        }
+      },
+    },
     VitePWA({
       registerType: 'prompt',
       injectRegister: false,
@@ -21,11 +45,7 @@ export default defineConfig({
         scope: './',
         lang: 'en',
         categories: ['lifestyle', 'productivity'],
-        icons: [
-          { src: 'icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-          { src: 'icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-        ],
+        icons: iconAssets.map(({ manifest }) => manifest),
       },
       workbox: {
         clientsClaim: true,

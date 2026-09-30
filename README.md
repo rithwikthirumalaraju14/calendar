@@ -48,6 +48,38 @@ hostname, and port) and browser profile. A new domain, another browser, another
 phone, or some home-screen contexts can have separate storage. Use backup/restore
 to move your writing rather than assuming it will automatically appear there.
 
+### Updating an old Android launch screen
+
+Android's initial static launch screen comes from the installed app's manifest
+icon. The animated moon is rendered by `index.html` after that screen. These use
+separate update mechanisms: tapping **Update** inside deyam updates the web app,
+while Chrome updates the installed icon through its WebAPK update process.
+
+Each production build now regenerates the PNG icons from `public/icon.svg` and
+gives the manifest icons content-hashed filenames. This advertises the current
+moon artwork at fresh URLs instead of reusing the old ghost-only icon URLs.
+The manifest URL and app identity stay stable so Chrome can update the existing
+installation.
+
+After deploying the new `dist/` to the same production address:
+
+1. Open deyam online, then use **App options → A fresh version is ready. Update**
+   if shown. The moon animation now plays in installed mode as well as the browser.
+2. If Android's first static screen still shows the old ghost-only square, allow
+   Chrome to update the installed app. This runs separately and can take a day or
+   two; use Wi-Fi, plug in the phone, and close the app after opening it online.
+3. To request that update manually, connect to Wi-Fi and power, then close and
+   force-stop deyam from Android's app settings. In Chrome, open `chrome://webapks`,
+   find deyam, and tap **Update** if available. Launch deyam once, then close and
+   force-stop it again. Check for **Successful** on that page before opening it
+   again. See [Chrome's manifest-update instructions](https://web.dev/articles/manifest-updates#test-manifest-updates).
+
+The Android screen itself is always static for a PWA; JavaScript/CSS animations
+start in the web app. Clearing browser/app storage does not fix this installed
+icon cache and can erase locally saved notes. For a shortcut-only installation
+or a browser without WebAPK updates, download a backup before removing and
+re-adding the home-screen app.
+
 ## Your pages
 
 - **Save note** saves one plain-text note for the selected local date.
@@ -88,12 +120,13 @@ For guaranteed notifications while the app is fully closed and offline, see
   month. Vertical gestures keep scrolling the page; ordinary date taps still open
   the note panel. Month changes have a short reduced-motion-aware transition.
 - Opening the app shows a brief midnight splash with a floating ghost, crescent,
-  and stars. It fades out once local data is ready, works offline, and displays
-  without animation when reduced motion is enabled.
+  and stars. It stays visible for at least 850ms in both browser and installed
+  mode, then fades out once local data is ready. It works offline; reduced motion
+  disables the animation, minimum delay, and fade.
 - Android also shows an OS-managed static icon splash before an installed PWA
-  loads. Website code cannot remove that screen. In installed mode, deyam skips
-  its own minimum loading delay and uses a quick fade once local data is ready,
-  avoiding a second forced splash after Android's launch screen.
+  loads. It uses matching moon artwork once the installed icon updates; the web
+  app then plays the moon animation. See the Android launch-screen update steps
+  above if the old ghost-only icon persists.
 - Calendar: arrow keys move focus, Home/End move within the week,
   Page Up/Down change month, Shift + Page Up/Down change year, Enter selects.
 - Editor: Ctrl/⌘ + Enter saves. Escape closes the mobile editor.
@@ -125,7 +158,8 @@ The ghost button in the header opens a dedicated animated-SVG section:
 - `src/stickers/poses.js`: the seven mood labels and personal messages.
 - `src/stickers/ghost.svg`: the artwork, costumes, and hand-drawn name paths.
 - `src/stickers/art.css`: the sticker section's layout and animation styling.
-- `public/icon.svg`: the matching ghost home-screen icon (`npm run icons` rebuilds PNGs).
+- `public/icon.svg`: the matching moon-and-ghost home-screen icon (PNG generation
+  runs automatically before `npm run build`; `npm run icons` also rebuilds them).
 - `vite.config.js`: the installed app's name and description.
 
 The rebrand keeps the original IndexedDB database so existing pages remain
@@ -146,7 +180,9 @@ WebKit. They exercise saving/reopening, editing, draft recovery, deleting/undoin
 backup download/restore, cycle calculations and persistence, offline reloads and edits, keyboard navigation, narrow
 layouts, simulated keyboard resizing, storage-open/write failures, all seven ghost
 moods, animation pause/cleanup, the doorway, and reduced-motion behavior. The offline
-test shuts down a dedicated server; Chromium also uses offline network emulation.
+test shuts down a dedicated server and checks the versioned install icons;
+Chromium also uses offline network emulation. Startup coverage verifies that the
+installed app displays the moon animation before opening the calendar.
 These are browser simulations; home-screen installation
 and the actual on-screen keyboard should also be checked on physical phones.
 

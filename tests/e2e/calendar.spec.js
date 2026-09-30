@@ -55,7 +55,8 @@ test('reload begins on the dark background without unstyled artwork', async ({ p
   await expect(page.locator('.app-shell')).toBeVisible();
 });
 
-test('installed app skips the second forced splash delay', async ({ page }) => {
+test('installed app shows the animated moon before opening the calendar', async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: 'no-preference' });
   await page.addInitScript(() => {
     const matchMedia = window.matchMedia.bind(window);
     window.matchMedia = (query) => {
@@ -65,24 +66,29 @@ test('installed app skips the second forced splash delay', async ({ page }) => {
       }
       return result;
     };
-    let dataReady;
-    new MutationObserver((records) => {
-      for (const record of records) {
-        if (record.target.id === 'calendar-panel' && record.target.getAttribute('aria-busy') === 'false') {
-          dataReady ??= performance.now();
-        }
-        if (record.target === document.body && record.attributeName === 'data-ready' && dataReady !== undefined) {
-          window.__installedLoaderDelay = performance.now() - dataReady;
-        }
-      }
-    }).observe(document, { subtree: true, attributes: true, attributeFilter: ['aria-busy', 'data-ready'] });
   });
-  await page.reload();
+  await page.clock.install({ time: new Date('2026-09-20T16:00:00Z') });
+  await page.clock.pauseAt(new Date('2026-09-20T16:00:01Z'));
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await expect(page.locator('#calendar-panel')).toHaveAttribute('aria-busy', 'false');
+  await expect(page.locator('.loader-moon')).toBeVisible();
+  await expect(page.locator('.loader-ghost')).toHaveCSS('animation-name', 'loader-float');
+  await expect(page.locator('.loader-orbit')).toHaveCSS('animation-name', 'loader-turn');
+  await expect(page.locator('.app-shell')).toHaveAttribute('inert', '');
+  await page.clock.runFor(500);
+  await expect(page.locator('#app-loader')).not.toHaveClass(/is-leaving/);
+  await page.screenshot({ path: testInfo.outputPath('installed-moon-loader.png') });
+  await page.clock.runFor(1000);
   await ready(page);
   await expect(page.locator('#app-loader')).toHaveCount(0);
   await expect(page.locator('.app-shell')).toBeVisible();
-  const delay = await page.evaluate(() => window.__installedLoaderDelay);
-  expect(delay).toBeLessThan(600);
+  await expect(page.locator('.app-shell')).not.toHaveAttribute('inert', '');
+
+  // Home-screen launches must still respect the device's motion preference.
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload({ waitUntil: 'domcontentloaded' });
+  await ready(page);
+  await expect(page.locator('#app-loader')).toHaveCount(0);
 });
 
 test('save, reload, edit, delete and undo a note', async ({ page }, testInfo) => {
@@ -232,6 +238,13 @@ test('cached app, moon and saved notes reopen offline', async ({ page, context, 
       await navigator.serviceWorker.ready;
       if (!navigator.serviceWorker.controller) await new Promise((resolve) => navigator.serviceWorker.addEventListener('controllerchange', resolve, { once: true }));
     });
+    const icons = await page.evaluate(async () => {
+      const manifestUrl = document.querySelector('link[rel="manifest"]').href;
+      const manifest = await (await fetch(manifestUrl)).json();
+      return manifest.icons.map((icon) => ({ ...icon, url: new URL(icon.src, manifestUrl).href }));
+    });
+    expect(icons).toHaveLength(3);
+    for (const icon of icons) expect(icon.src).toMatch(/-[a-f0-9]{12}\.png$/);
     await openDay(page);
     await save(page, 'A page without an internet connection.');
     await closeSheet(page);
@@ -241,6 +254,17 @@ test('cached app, moon and saved notes reopen offline', async ({ page, context, 
     await page.reload();
     await ready(page);
     await expect(page.locator('#moon-canvas')).toHaveClass('is-ready');
+    // The exact, versioned URLs in the install manifest must work with the
+    // server shut down, not just their legacy public filenames.
+    for (const icon of icons) {
+      const dimensions = await page.evaluate(async (url) => {
+        const image = new Image();
+        image.src = url;
+        await image.decode();
+        return `${image.naturalWidth}x${image.naturalHeight}`;
+      }, icon.url);
+      expect(dimensions).toBe(icon.sizes);
+    }
     await openDay(page);
     await expect(page.locator('#note-text')).toHaveValue('A page without an internet connection.');
     await save(page, 'Edited while offline.');
